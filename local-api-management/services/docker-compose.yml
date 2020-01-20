@@ -1,0 +1,60 @@
+###############################################################
+# Dynamic load balancer external services
+# docker-compose.yml
+#
+# This provides a two services that will be detected and
+# proxied
+# daemon for container events and use dynamic load balancer
+# API proxy load balancer. The APIs are accessible behind  this
+# proxy which shields them from the outside world. Containers are assigned
+# static ports to enable rolling updates of each API as needed.
+# Containers performing data operations are assigned a partition
+# of the default GridFTP and FTP port ranges to enable proper
+# operation of the protocol from within each container.
+#
+###############################################################
+
+version: '3.7'
+
+networks:
+  localapimanagement_traefik:
+    external: true
+
+services:
+
+  nginx:
+    image: nginx:alpine
+    restart: on-failure
+    networks:
+      - localapimanagement_traefik
+    ports:
+      - '8201:80'
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.nginx.rule=Host(`nginx`)"
+      - "traefik.http.routers.nginx.entrypoints=web, websecure"
+
+  httpbin:
+    image: agaveplatform/httpbin:latest
+    restart: on-failure
+    networks:
+      - localapimanagement_traefik
+    ports:
+      - '8200:8000'
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.httpbin.rule=Host(`httpbin`)"
+      - "traefik.http.routers.httpbin.entrypoints=web, websecure"
+
+  thing1:
+    image: emilevauge/whoami:v1.0.0
+    restart: on-failure
+    networks:
+      - localapimanagement_traefik
+    ports:
+      - '8202:80'
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.thing1.entrypoints=web, websecure"
+      - "traefik.http.routers.thing1.rule=Host(`thing1`)"
+

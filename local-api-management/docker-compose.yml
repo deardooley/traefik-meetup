@@ -1,0 +1,48 @@
+###############################################################
+# Local API management
+# docker-compose.yml
+#
+# This example uses Traefik's auth forwarder to force all incoming
+# requests to a gateway service that ensures the current user has
+# authenticated against an OIDC server. Upon successful login, a
+# cookie is set in the user session and they are redirected back
+# to the original proxied url.
+#
+# Notice that the backend containers never publish their ports to
+# the host, thus ensuring all traffic is locked down to traefik
+# and the OIDC server. We use Dex as our OIDC server for simplicity.
+# You could swap it out with Google, Github, Keycloak, etc.
+#
+###############################################################
+
+version: '3.7'
+
+networks:
+  traefik:
+
+services:
+  traefik:
+    image: traefik:v2.1
+    command:
+      - "--log.level=DEBUG"
+      - "--api.insecure=true"
+      - "--api.dashboard=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--providers.file=true"
+      - "--providers.file.directory=/config"
+      - "--providers.file.watch=true"
+      - "--entryPoints.web.address=:80"
+      - "--entryPoints.websecure.address=:443"
+      - "--entryPoints.grpc.address=:50052"
+    ports:
+      - 80:80
+      - 443:443
+      - 28443:8080
+    restart: on-failure
+    volumes:
+      - ./static-config:/config
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    labels:
+      - "traefik.enable=true"
+

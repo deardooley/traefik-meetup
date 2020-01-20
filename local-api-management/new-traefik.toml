@@ -1,0 +1,17 @@
+[global]
+
+[entryPoints]
+  [entryPoints.http]
+    address = ":80"
+  [entryPoints.https]
+    address = ":443"
+
+[providers]
+  providersThrottleDuration = "2s"
+  [providers.docker]
+    watch = true
+    endpoint = "unix:///var/run/docker.sock"
+    swarmModeRefreshSeconds = "15s"
+
+[log]
+  level = "DEBUG"
