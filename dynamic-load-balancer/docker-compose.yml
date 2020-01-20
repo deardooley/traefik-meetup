@@ -1,0 +1,52 @@
+###############################################################
+# Dynamic load balancer example
+# docker-compose.yml
+#
+# This provides a Traefik container that will listen to the Docker
+# daemon for container events and use dynamic load balancer
+# API proxy load balancer. The APIs are accessible behind  this
+# proxy which shields them from the outside world. Containers are assigned
+# static ports to enable rolling updates of each API as needed.
+# Containers performing data operations are assigned a partition
+# of the default GridFTP and FTP port ranges to enable proper
+# operation of the protocol from within each container.
+#
+###############################################################
+
+version: '3.7'
+
+services:
+
+  traefik:
+    image: traefik:v2.1
+    command:
+      - "--log.level=DEBUG"
+      - "--api.insecure=true"
+      - "--api.dashboard=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--providers.file=true"
+      - "--providers.file.directory=/config"
+      - "--providers.file.watch=true"
+      - "--entryPoints.web.address=:80"
+      - "--entryPoints.websecure.address=:443"
+    ports:
+      - 80:80
+      - 443:443
+      - 28443:8080
+    restart: on-failure
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    labels:
+      - "traefik.enable=true"
+
+  # here is a simple web server backend that we will scale up
+  # during the demo to show how traefik picks up the different
+  # containers and adds them to the load balancer automagically
+  thing1:
+    image: emilevauge/whoami:v1.0.0
+    restart: on-failure
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.thing1.entrypoints=web, websecure"
+      - "traefik.http.routers.thing1.rule=Host(`thing1`)"

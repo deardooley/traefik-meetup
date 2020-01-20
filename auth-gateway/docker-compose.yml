@@ -1,0 +1,91 @@
+###############################################################
+# Auth gateway
+# docker-compose.yml
+#
+# This example uses Traefik's auth forwarder to force all incoming
+# requests to a gateway service that ensures the current user has
+# authenticated against an OIDC server. Upon successful login, a
+# cookie is set in the user session and they are redirected back
+# to the original proxied url.
+#
+# Notice that the backend containers never publish their ports to
+# the host, thus ensuring all traffic is locked down to traefik
+# and the OIDC server. We use Dex as our OIDC server for simplicity.
+# You could swap it out with Google, Github, Keycloak, etc.
+#
+###############################################################
+
+version: '3.7'
+
+networks:
+  traefik:
+
+services:
+  traefik:
+    image: traefik:v1.7
+    command: -c /traefik.toml --logLevel=DEBUG
+    ports:
+      - "80:80"
+      - "28443:8080"
+    networks:
+      - traefik
+    volumes:
+      - ./traefik.toml:/traefik.toml
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  thing1:
+    image: emilevauge/whoami:v1.0.0
+    networks:
+      - traefik
+    labels:
+      - traefik.backend=whoami1
+      - traefik.enable=true
+      - traefik.port=80
+      - traefik.frontend.rule=Host:thing1,thing1.127-0.0.1.nip.io
+
+  thing2:
+    image: emilevauge/whoami:v1.0.0
+    networks:
+      - traefik
+    labels:
+      - traefik.backend=whoami2
+      - traefik.enable=true
+      - traefik.port=80
+      - traefik.frontend.rule=Host:thing2,thing2.127-0.0.1.nip.io
+
+
+  traefik-forward-auth:
+    image: deardooley/traefik-forward-auth:develop
+    # Uncomment to add traefik rules and actions (allow, restrict) for the server. All are restricted by default.
+    command: --rule.1.action=allow --rule.1.rule="PathPrefix(`/dex`)"
+    depends_on:
+      - dex
+    restart: always
+    environment:
+      - ID_SERVICE=OIDC
+      # This should be the interal http address and port for dex. It will make the oidc discovery
+      # call here and get the urls for the auth and token endpoints from there.
+      - OIDC_ISSUER=http://dex:5556/dex
+      - CLIENT_ID=traefik-forward-auth
+      - CLIENT_SECRET=ZXhhbXBsZS1hcHAtc2VjcmV0
+      - SECRET=something-random
+      - COOKIE_DOMAIN=localhost.com
+      - INSECURE_COOKIE=true
+      - LOG_LEVEL=trace
+    networks:
+      - traefik
+
+  dex:
+    image: quay.io/dexidp/dex:v2.19.0
+    command: serve /config/dex.yaml
+    volumes:
+      - ./dex.yaml:/config/dex.yaml
+    ports:
+      - 5556:5556
+    networks:
+      - traefik
+    labels:
+      - traefik.enable=true
+      - traefik.port=5556
+      - traefik.backend=dex
+      - traefik.frontend.rule=PathPrefix:/dex
