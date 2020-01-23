@@ -1,7 +1,8 @@
 # 5 ways to level up your developer powers with Traefik
 
-**Date:** Thursday, January 23, 2020
-**Time:** 10:30am - 11:30am
+**Presenter:** Rion Dooley | @deardooley  
+**Date:** Thursday, January 23, 2020  
+**Time:** 10:30am - 11:30am  
 **Registration:** [Webinar](https://containo.us/events/5-ways-to-level-up-your-developer-powers-with-traefik-by-dr-rion-dooley/)
 
 ### Abstract
