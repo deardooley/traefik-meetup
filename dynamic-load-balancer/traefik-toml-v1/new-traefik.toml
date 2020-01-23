@@ -1,0 +1,25 @@
+[global]
+
+[entryPoints]
+  [entryPoints.http]
+    address = ":80"
+  [entryPoints.https]
+    address = ":443"
+
+[providers]
+  providersThrottleDuration = "2s"
+  [providers.docker]
+    watch = true
+    swarmMode = true
+    swarmModeRefreshSeconds = "15s"
+
+[log]
+  level = "DEBUG"
+
+[certificatesResolvers]
+  [certificatesResolvers.default]
+    [certificatesResolvers.default.acme]
+      email = "ssl@sc18.training.agaveplatform.org"
+      storage = "/ssl/acme.json"
+      [certificatesResolvers.default.acme.httpChallenge]
+        entryPoint = "http"

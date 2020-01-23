@@ -17,8 +17,9 @@
 version: '3.7'
 
 networks:
-  localapimanagement_traefik:
+  traefik:
     external: true
+    name: local-api-management_default
 
 services:
 
@@ -26,7 +27,7 @@ services:
     image: nginx:alpine
     restart: on-failure
     networks:
-      - localapimanagement_traefik
+      - traefik
     ports:
       - '8201:80'
     labels:
@@ -38,23 +39,25 @@ services:
     image: agaveplatform/httpbin:latest
     restart: on-failure
     networks:
-      - localapimanagement_traefik
+      - traefik
     ports:
       - '8200:8000'
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.httpbin.rule=Host(`httpbin`)"
       - "traefik.http.routers.httpbin.entrypoints=web, websecure"
+      - "local.proxy.enabled=true"
 
   thing1:
     image: emilevauge/whoami:v1.0.0
     restart: on-failure
     networks:
-      - localapimanagement_traefik
+      - traefik
     ports:
       - '8202:80'
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.thing1.entrypoints=web, websecure"
       - "traefik.http.routers.thing1.rule=Host(`thing1`)"
+      - "local.proxy.enabled=true"
 

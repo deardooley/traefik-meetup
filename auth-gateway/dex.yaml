@@ -57,10 +57,10 @@ oauth2:
 staticClients:
   - id: traefik-forward-auth
     redirectURIs:
-      - http://whoami.localhost.com:8085/_oauth
-      - http://whoami.localhost.com/_oauth
-      - http://whoami.127-0.0.1.nip.io/_oauth
-      - http://whoami/_oauth
+      - http://thing1.127-0.0.1.nip.io/_oauth
+      - http://thing1/_oauth
+      - http://thing2.127-0.0.1.nip.io/_oauth
+      - http://thing2/_oauth
       - http://auth.localhost.com:8085/_oauth
       - http://auth.localhost.com/_oauth
     name: 'Traefik Forward Auth'

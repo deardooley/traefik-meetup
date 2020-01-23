@@ -1,0 +1,41 @@
+# Ansible generated config file for traefik
+logLevel = "DEBUG"
+
+defaultEntryPoints = ["http","https"]
+[entryPoints]
+  [entryPoints.http]
+  address = ":80"
+		[entryPoints.http.redirect]
+			entryPoint = "https"
+  [entryPoints.https]
+  address = ":443"
+    [entryPoints.https.tls]
+      [[entryPoints.https.tls.certificates]]
+      CertFile = "/ssl/sc18.training.agaveplatform.org.crt"
+      KeyFile = "/ssl/sc18.training.agaveplatform.org.key"
+
+[web]
+address = ":28443"
+CertFile = "/ssl/sc18.training.agaveplatform.org.crt"
+KeyFile = "/ssl/sc18.training.agaveplatform.org.key"
+
+
+[docker]
+swarmmode = true
+watch = true
+domain = "sc18.training.agaveplatform.org"
+
+# Enable ACME (Let's Encrypt): automatic SSL.
+[acme]
+onDemand = true
+storage = "/ssl/acme.json"
+acmeLogging = true
+entryPoint = "https"
+email = "ssl@sc18.training.agaveplatform.org"
+[acme.httpChallenge]
+  entryPoint = "http"
+
+[[acme.domains]]
+main = "*.sc18.training.agaveplatform.org"
+sans = ["sc18.training.agaveplatform.org"]
+

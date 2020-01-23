@@ -2,16 +2,16 @@
 # Local API management
 # docker-compose.yml
 #
-# This example uses Traefik's auth forwarder to force all incoming
-# requests to a gateway service that ensures the current user has
-# authenticated against an OIDC server. Upon successful login, a
-# cookie is set in the user session and they are redirected back
-# to the original proxied url.
+# This example starts a traefik container on the local system
+# and exposes it on an external network. This allows containers
+# outside the stack to be dynamically discovered and proxied
+# without having to spin up additional proxies. A static directory
+# is also watched for configuration files pointing to persistent
+# services used in my local environment.
 #
-# Notice that the backend containers never publish their ports to
-# the host, thus ensuring all traffic is locked down to traefik
-# and the OIDC server. We use Dex as our OIDC server for simplicity.
-# You could swap it out with Google, Github, Keycloak, etc.
+# Notice that the Traefik config limits discovery of docker containers
+# to those with a label matching "local.proxy.enabled=true". A
+# separate
 #
 ###############################################################
 
@@ -19,6 +19,7 @@ version: '3.7'
 
 networks:
   traefik:
+    external: true
 
 services:
   traefik:
@@ -28,7 +29,8 @@ services:
       - "--api.insecure=true"
       - "--api.dashboard=true"
       - "--providers.docker=true"
-      - "--providers.docker.exposedbydefault=false"
+      - "--providers.docker.exposedbydefault=true"
+      - "--providers.docker.constraints=Label(`local.proxy.enabled`,`true`)"
       - "--providers.file=true"
       - "--providers.file.directory=/config"
       - "--providers.file.watch=true"
@@ -38,11 +40,12 @@ services:
     ports:
       - 80:80
       - 443:443
-      - 28443:8080
-    restart: on-failure
+      - 28080:8080
+    restart: always
     volumes:
       - ./static-config:/config
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
     labels:
       - "traefik.enable=true"
+
 
