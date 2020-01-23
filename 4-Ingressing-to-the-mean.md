@@ -1,4 +1,4 @@
-## Ingress Controller
+## Ingressing to the mean
 
 Working in a k8s environment provides a lot of the amenities we've been talking about in the previous examples: service discovery, load balancing across individual containers, network isolation, etc. When you need to expose your HTTP/HTTPX routes outside a K8S cluster, an [Ingress Controller](https://kubernetes.io/docs/concepts/services-networking/ingress/) is the way to go. Traefik can be used as-is as a full featured ingress controller.   
  
