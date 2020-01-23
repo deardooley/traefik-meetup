@@ -1,12 +1,11 @@
 # 5 ways to level up your developer powers with Traefik
 
-**Presenter:** Rion Dooley | @deardooley  | [Data Machines Corp](https://datamachines.io)
+**Presenter:** Rion Dooley | @deardooley  | [Data Machines Corp](https://datamachines.io)  
 **Date:** Thursday, January 23, 2020  
 **Time:** 10:30am - 11:30am  
-**Registration:** [Webinar](https://containo.us/events/5-ways-to-level-up-your-developer-powers-with-traefik-by-dr-rion-dooley/)
+**Registration:** [Webinar](https://containo.us/events/5-ways-to-level-up-your-developer-powers-with-traefik-by-dr-rion-dooley/)  
 
 ### Abstract
-
 Traefik is cool, and flexible. It’s become my goto solution any time I need a reverse proxy, edge router, and lately, an ingress controller. This talk will walk through 5 real world examples in which I use Traefik for more effective application development and deployment.
 
 ### Outline
@@ -18,8 +17,7 @@ Traefik is cool, and flexible. It’s become my goto solution any time I need a 
 4. [Ingressing to the mean]( 4-Ingressing-to-the-mean.md) 
 5. [Uptime monitoring & health checks](5-Uptime-monitoring-and-health-checks.md)
 
-Acknowledgement
----------------
+### Acknowledgement
 
 This material is based upon work supported by the National Science Foundation Division of Advanced CyberInfrastructure (1127210).
 
