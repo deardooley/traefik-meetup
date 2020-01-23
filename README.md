@@ -1,6 +1,6 @@
 # 5 ways to level up your developer powers with Traefik
 
-**Presenter:** Rion Dooley | @deardooley  
+**Presenter:** Rion Dooley | @deardooley  | [Data Machines Corp](https://datamachines.io)
 **Date:** Thursday, January 23, 2020  
 **Time:** 10:30am - 11:30am  
 **Registration:** [Webinar](https://containo.us/events/5-ways-to-level-up-your-developer-powers-with-traefik-by-dr-rion-dooley/)
@@ -23,8 +23,4 @@ Acknowledgement
 
 This material is based upon work supported by the National Science Foundation Division of Advanced CyberInfrastructure (1127210).
 
-Special thanks
---------------
-
-Special thanks go out to ***Shuai Yuan*** for his help on the Jupyter GUI notebook.
 
